@@ -14,10 +14,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Cypress Run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           record: true
         env:
