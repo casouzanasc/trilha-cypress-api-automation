@@ -58,20 +58,37 @@ describe('Booking api testing - 1º version', () => {
   });
   it('4 - Get booking by id', () => {
     cy.request({
-      method: 'GET',
-      url:'/booking/1',
-      headers:{ 'Accept': 'application/json'}
-    }).then((response) => {	
-      expect(response.status).to.eq(200);
-      expect(response.headers).to.have.property('content-type', 'application/json; charset=utf-8')
-      expect(response.body).to.be.an('object');
-      expect(response.body).to.have.property('firstname').and.to.be.a('string');
-      expect(response.body).to.have.property('lastname').and.to.be.a('string');
-      expect(response.body).to.have.property('totalprice').and.to.be.a('number');
-      expect(response.body).to.have.property('depositpaid').and.to.be.a('boolean');
-      expect(response.body).to.have.property('bookingdates').and.to.be.an('object');
-      expect(response.body.bookingdates).to.have.property('checkin').and.to.be.a('string');
-      expect(response.body.bookingdates).to.have.property('checkout').and.to.be.a('string');
+      method: 'POST',
+      url: '/booking',
+      headers: { 'Content-Type': 'application/json' },
+      body: {
+        firstname: 'Carol',
+        lastname: 'Louzada',
+        totalprice: 150,
+        depositpaid: true,
+        bookingdates: {
+          checkin: '2018-01-01',
+          checkout: '2019-01-01'
+        },
+        additionalneeds: 'Breakfast'
+      }
+    }).then((createdBooking) => {
+      cy.request({
+        method: 'GET',
+        url: '/booking/' + createdBooking.body.bookingid,
+        headers: { 'Accept': 'application/json' }
+      }).then((response) => {
+        expect(response.status).to.eq(200);
+        expect(response.headers).to.have.property('content-type', 'application/json; charset=utf-8')
+        expect(response.body).to.be.an('object');
+        expect(response.body).to.have.property('firstname').and.to.be.a('string');
+        expect(response.body).to.have.property('lastname').and.to.be.a('string');
+        expect(response.body).to.have.property('totalprice').and.to.be.a('number');
+        expect(response.body).to.have.property('depositpaid').and.to.be.a('boolean');
+        expect(response.body).to.have.property('bookingdates').and.to.be.an('object');
+        expect(response.body.bookingdates).to.have.property('checkin').and.to.be.a('string');
+        expect(response.body.bookingdates).to.have.property('checkout').and.to.be.a('string');
+      });
     });
   });
 
@@ -384,19 +401,24 @@ describe('Booking api testing - 2ª version',() => {
   });
 
   it('4 - Get booking by id', () => {
-
-    cy.getRequest('/booking/1',{'Content-Type': 'application/json'}).then(response => {
-      expect(response.status).to.eq(200);
-      expect(response.headers).to.have.property('content-type', 'application/json; charset=utf-8')
-      expect(response.body).to.be.an('object');
-      expect(response.body).to.have.property('firstname').and.to.be.a('string');
-      expect(response.body).to.have.property('lastname').and.to.be.a('string');
-      expect(response.body).to.have.property('totalprice').and.to.be.a('number');
-      expect(response.body).to.have.property('depositpaid').and.to.be.a('boolean');
-      expect(response.body).to.have.property('bookingdates').and.to.be.an('object');
-      expect(response.body.bookingdates).to.have.property('checkin').and.to.be.a('string');
-      expect(response.body.bookingdates).to.have.property('checkout').and.to.be.a('string');
-    })
+    cy.get('@newBooking').then((newBooking) => {
+      cy.postRequest('/booking', { 'Content-type': 'application/json' }, newBooking)
+        .then((createdBooking) => {
+          cy.getRequest('/booking/' + createdBooking.body.bookingid, { 'Content-Type': 'application/json' })
+            .then(response => {
+              expect(response.status).to.eq(200);
+              expect(response.headers).to.have.property('content-type', 'application/json; charset=utf-8')
+              expect(response.body).to.be.an('object');
+              expect(response.body).to.have.property('firstname').and.to.be.a('string');
+              expect(response.body).to.have.property('lastname').and.to.be.a('string');
+              expect(response.body).to.have.property('totalprice').and.to.be.a('number');
+              expect(response.body).to.have.property('depositpaid').and.to.be.a('boolean');
+              expect(response.body).to.have.property('bookingdates').and.to.be.an('object');
+              expect(response.body.bookingdates).to.have.property('checkin').and.to.be.a('string');
+              expect(response.body.bookingdates).to.have.property('checkout').and.to.be.a('string');
+            });
+        });
+    });
   });
 
   it('5 - Creating a new booking with success return status code 200', () => {
