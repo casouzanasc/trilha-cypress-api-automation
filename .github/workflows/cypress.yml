@@ -1,42 +1,25 @@
-name:  Minha primeira execução com actions
-# Controls when the workflow will run
+name: Cypress Tests
+
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches: [ "part2" ]
+    branches:
+      - part2
   pull_request:
-    branches: [ "part2" ]
+    branches:
+      - part2
+
 jobs:
   cypress-run:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    container:
-      image: cypress/browsers:node18.12.0-chrome106-ff106
-      options: --user 1001
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      # Install NPM dependencies, cache them correctly
-      # and run all Cypress tests
-      
-      - name: Set up Node.js
-        uses: actions/setup-node@v3.8.1
-        with:
-          node-version: 18
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Cypress run
+      - name: Cypress Run
         uses: cypress-io/github-action@v6
         with:
-          command: npm run run-other-tests 
-          browser: chrome
           record: true
-
         env:
-          # For recording and parallelization to work you must set your CYPRESS_RECORD_KEY
-          # in GitHub repo → Settings → Secrets → Actions
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          # Creating a token https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

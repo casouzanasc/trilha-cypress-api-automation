@@ -4,8 +4,8 @@
   "description": "Esse repositório engloba o código criado para o curso de automação web api da trilha de Cypress da DIO.",
   "main": "index.js",
   "scripts": {
-    "run-api-tests": "npx cypress run --record -C cypress.config.js --spec cypress\\e2e\\APITests ",
-    "run-other-tests": "npx cypress run --record -C cypress.config.js "
+    "run-api-tests": "npx cypress run --record --key 2737002a-5487-4cff-b50c-8c7cbec1ebec -C cypress.config.js --spec cypress\\e2e\\APITests ",
+    "run-other-tests": "npx cypress run --record --key 2737002a-5487-4cff-b50c-8c7cbec1ebec -C cypress.config.js "
   },
   "author": "",
   "license": "ISC",
